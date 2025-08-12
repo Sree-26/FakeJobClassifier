@@ -1,33 +1,27 @@
 import streamlit as st
-import pickle
+import joblib
 
 # Load model and vectorizer
-with open("fake_job_model.pkl", "rb") as f:
-    model = pickle.load(f)
+model = joblib.load("fake_job_model.joblib")
+vectorizer = joblib.load("vectorizer.joblib")
 
-with open("vectorizer.pkl", "rb") as f:
-    vectorizer = pickle.load(f)
+# Streamlit App
+st.title("Fake Job Postings Classifier")
 
-st.set_page_config(page_title="Fake Job Detector", page_icon="🕵️")
-
-# Title & Instructions
-st.title("🕵️ Fake Job Detector")
-st.write("Paste a job description below and click **Predict** to see if it's real or fake.")
-
-# Text area for user input
-user_input = st.text_area("Job description:")
+user_input = st.text_area("Enter the job description:")
 
 if st.button("Predict"):
-    if not user_input.strip():
-        st.warning("Please enter a job description.")
-    else:
-        input_vector = vectorizer.transform([user_input])
-        prediction = model.predict(input_vector)[0]
-
+    if user_input.strip():
+        # Transform input
+        user_tfidf = vectorizer.transform([user_input])
+        # Prediction
+        prediction = model.predict(user_tfidf)[0]
+        # Output
         if prediction == 1:
-            st.error("🚨 Likely FAKE job posting.")
+            st.error("⚠️ This job posting is likely FAKE.")
         else:
-            st.success("✅ Likely REAL job posting.")
+            st.success("✅ This job posting seems REAL.")
+    else:
+        st.warning("Please enter a job description before predicting.")
 
-st.write("---")
-st.caption("Model trained on Kaggle Fake Job Postings Dataset")
+
