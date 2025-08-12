@@ -31,9 +31,9 @@ model.fit(X_train_tfidf, y_train)
 y_pred = model.predict(X_test_tfidf)
 print("Accuracy:", accuracy_score(y_test, y_pred))
 
-# 8. Save model and vectorizer
-with open("fake_job_model.pkl", "wb") as f:
-    pickle.dump(model, f)
+import joblib
 
-with open("vectorizer.pkl", "wb") as f:
-    pickle.dump(vectorizer, f)
+# Save
+joblib.dump(model, "fake_job_model.joblib")
+joblib.dump(vectorizer, "vectorizer.joblib")
+
